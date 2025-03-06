@@ -7,29 +7,7 @@ import static ToDoList.Status.*;
 
 public class Main {
     public static void main(String[] args) {
-        //TaskManager tm = new TaskManager();
-            //для тестов
-        Task taskTest1 = new Task
-                ("Задача 1", "Описание 1", LocalDate.of(2025, 3, 29), DONE);
-        Task taskTest2 = new Task
-                ("Задача 2", "Описание 2", LocalDate.of(2025, 4, 1), TODO);
-        Task taskTest3 = new Task
-                ("Задача 3", "Описание 3", LocalDate.of(2025, 1, 29), DONE);
-        Task taskTest4 = new Task
-                ("Задача 4", "Описание 4", LocalDate.of(2025, 6, 1), IN_PROGRESS);
-        Task taskTest5 = new Task
-                ("Задача 5", "Описание 5", LocalDate.of(2025, 12, 29), TODO);
-        Task taskTest6 = new Task
-                ("Задача 6", "Описание 6", LocalDate.of(2026, 10, 1), IN_PROGRESS);
-        List<Task> list = TaskManager.tm.getList();
-        list.add(taskTest1);
-        list.add(taskTest6);
-        list.add(taskTest5);
-        list.add(taskTest4);
-        list.add(taskTest3);
-        list.add(taskTest2);
-        TaskManager.tm.setList(list);
-            //
+
 
         while (true) {
             printMenu();
