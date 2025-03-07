@@ -1,8 +1,5 @@
 package ToDoList;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,10 +8,9 @@ import java.util.Scanner;
 
 import static ToDoList.Status.*;
 
-@Setter
-@Getter
+
 public class TaskManager implements TaskManagerInterface {
-    private List<Task> list = new ArrayList<>();
+    List<Task> listForWorkWithTaskRepositiry = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
     static TaskManager tm = new TaskManager();
 
@@ -42,16 +38,18 @@ public class TaskManager implements TaskManagerInterface {
             task.setDeadline(LocalDate.parse(deadline));
         }
         task.setStatus(TODO);
-        list.add(task);
+        listForWorkWithTaskRepositiry = TaskRepository.tr.getTaskList();
+        listForWorkWithTaskRepositiry.add(task);
+        TaskRepository.tr.setTaskList(listForWorkWithTaskRepositiry);
     }
 
     @Override
     public void listTasks() {
-        if (list.isEmpty()) {
+        if (taskList.isEmpty()) {
             System.out.println("В списке нет задач!");
         } else {
             System.out.println("Список задач:");
-            list.forEach(System.out::println);
+            taskList.forEach(System.out::println);
         }
     }
 
@@ -62,7 +60,7 @@ public class TaskManager implements TaskManagerInterface {
             System.out.println("Какую задачу хотите отредактировать?");
             String str = scanner.nextLine();
             List<Task> newList = new ArrayList<>();
-            for (Task taskSearch : list) {
+            for (Task taskSearch : taskList) {
                 if (taskSearch.getName().toLowerCase().contains(str.toLowerCase())) {
                     newList.add(taskSearch);
                 }
@@ -102,7 +100,7 @@ public class TaskManager implements TaskManagerInterface {
                 }
             } else {
                 System.out.println("По вашему запросу найдено больше одной задачи:");
-                list.forEach(System.out::println);
+                taskList.forEach(System.out::println);
                 System.out.println("Повторите запрос.");
             }
         }
@@ -115,7 +113,7 @@ public class TaskManager implements TaskManagerInterface {
             System.out.println("Какую задачу хотите удалить?");
             String str = scanner.nextLine();
             List<Task> newList = new ArrayList<>();
-            for (Task taskSearch : list) {
+            for (Task taskSearch : taskList) {
                 if (taskSearch.getName().toLowerCase().contains(str.toLowerCase())) {
                     newList.add(taskSearch);
                 }
@@ -129,17 +127,17 @@ public class TaskManager implements TaskManagerInterface {
                 }
             } else if (newList.size() == 1) {
                 System.out.println("Удаляем задачу...");
-                list.remove(newList.get(0));
+                taskList.remove(newList.get(0));
                 System.out.println("...задача удалена!");
             } else {
                 System.out.println("По вашему запросу найдено больше одной задачи:");
-                list.forEach(System.out::println);
+                taskList.forEach(System.out::println);
                 System.out.println("Удалить все найденные задачи?(да/нет)");
                 Scanner scanner3 = new Scanner(System.in);
                 String cmd = scanner3.nextLine();
                 if (cmd.equals("да")) {
                     for (Task taskToRemove : newList) {
-                        list.remove(taskToRemove);
+                        taskList.remove(taskToRemove);
                     }
                     System.out.println("Все задачи удалены!");
                     return;
@@ -156,13 +154,13 @@ public class TaskManager implements TaskManagerInterface {
         while (true) {
             int cmd = scanner.nextInt();
             if (cmd == 1) {
-                list.stream().filter(e -> e.getStatus().equals(TODO)).forEach(System.out::println);
+                taskList.stream().filter(e -> e.getStatus().equals(TODO)).forEach(System.out::println);
                 break;
             } else if (cmd == 2) {
-                list.stream().filter(e -> e.getStatus().equals(IN_PROGRESS)).forEach(System.out::println);
+                taskList.stream().filter(e -> e.getStatus().equals(IN_PROGRESS)).forEach(System.out::println);
                 break;
             } else if (cmd == 3) {
-                list.stream().filter(e -> e.getStatus().equals(DONE)).forEach(System.out::println);
+                taskList.stream().filter(e -> e.getStatus().equals(DONE)).forEach(System.out::println);
                 break;
             } else if (cmd == 4) {
                 break;
@@ -180,25 +178,25 @@ public class TaskManager implements TaskManagerInterface {
             Scanner scanner = new Scanner(System.in);
             int cmd = scanner.nextInt();
             if (cmd == 1) {
-                tm.setList(list.stream().sorted(Comparator.comparing(Task::getName).
+                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getName).
                                 thenComparing(Task::getDeadline).
                                 thenComparing(Task::getStatus)).
                         toList());
-                list.forEach(System.out::println);
+                taskList.forEach(System.out::println);
                 break;
             } else if (cmd == 2) {
-                tm.setList(list.stream().sorted(Comparator.comparing(Task::getDeadline).
+                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getDeadline).
                                 thenComparing(Task::getName).
                                 thenComparing(Task::getStatus)).
                         toList());
-                list.forEach(System.out::println);
+                taskList.forEach(System.out::println);
                 break;
             } else if (cmd == 3) {
-                tm.setList(list.stream().sorted(Comparator.comparing(Task::getStatus).
+                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getStatus).
                                 thenComparing(Task::getName).
                                 thenComparing(Task::getDeadline)).
                         toList());
-                list.forEach(System.out::println);
+                taskList.forEach(System.out::println);
                 break;
             } else if (cmd == 4) {
                 break;

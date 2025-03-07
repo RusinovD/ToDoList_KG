@@ -20,14 +20,14 @@ public class Main {
                 ("Задача 5", "Описание 5", LocalDate.of(2025, 12, 29), TODO);
         Task taskTest6 = new Task
                 ("Задача 6", "Описание 6", LocalDate.of(2026, 10, 1), IN_PROGRESS);
-        List<Task> list = TaskManager.tm.getList();
+        List<Task> list = TaskManager.tm.getTaskList();
         list.add(taskTest1);
         list.add(taskTest6);
         list.add(taskTest5);
         list.add(taskTest4);
         list.add(taskTest3);
         list.add(taskTest2);
-        TaskManager.tm.setList(list);
+        TaskManager.tm.setTaskList(list);
         //
 
 

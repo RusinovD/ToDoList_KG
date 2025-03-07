@@ -4,7 +4,7 @@ public interface TaskManagerInterface {
     //add – добавить задачу.
     void addTask();
 
-    //list – вывести список задач.
+    //taskList – вывести список задач.
     void listTasks();
 
     //edit – редактировать задачу.
