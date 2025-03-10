@@ -1,11 +1,13 @@
 package ToDoList;
 
+import java.time.LocalDate;
+
 public interface UserInteractionInterface {
-    void scanName();
+    String scanTaskName();
 
-    void scanDescription();
+    String scanTaskDescription();
 
-    void scanDeadline();
+    LocalDate scanTaskDeadline();
 
-    void scanStatus();
+    Enum scanTaskStatus();
 }

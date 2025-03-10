@@ -1,14 +1,15 @@
 package ToDoList;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
+@NoArgsConstructor
+@EqualsAndHashCode
+@AllArgsConstructor
 public class TaskRepository {
-    private List<Task> taskList = new ArrayList<>();
-    static TaskRepository tr = new TaskRepository();
+    private List<Task> tasksList = new ArrayList<>();
 }

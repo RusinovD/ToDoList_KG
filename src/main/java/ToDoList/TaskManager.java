@@ -8,166 +8,74 @@ import java.util.Scanner;
 
 import static ToDoList.Status.*;
 
-
 public class TaskManager implements TaskManagerInterface {
-    List<Task> listForWorkWithTaskRepositiry = new ArrayList<>();
+    UserInteraction ui = new UserInteraction();
+    TaskRepository tr = new TaskRepository();
     Scanner scanner = new Scanner(System.in);
-    static TaskManager tm = new TaskManager();
 
     @Override
-    public void addTask() {
-        Task task = createTask();
-        System.out.println("Введите название задачи (Введите \"отмена\" для выхода):");
-        String name = scanner.nextLine();
-        if (name.equals("отмена")) {
-            return;
-        }
-        task.setName(name);
-        System.out.println("Введите описание задачи (Введите \"отмена\" для выхода):");
-        String description = scanner.nextLine();
-        if (description.equals("отмена")) {
-            return;
-        }
-        task.setDescription(description);
-        System.out.println("Установите срок задачи (в формате ГГГГ-ММ-ДД " +
-                "(Введите \"0\", если не хотите устанавливать срок на задачу):");
-        String deadline = scanner.nextLine();
-        if (deadline.equals("0")) {
-            task.setDeadline(null);
-        } else {
-            task.setDeadline(LocalDate.parse(deadline));
-        }
-        task.setStatus(TODO);
-        listForWorkWithTaskRepositiry = TaskRepository.tr.getTaskList();
-        listForWorkWithTaskRepositiry.add(task);
-        TaskRepository.tr.setTaskList(listForWorkWithTaskRepositiry);
+    public void addTask(String taskName, String taskDescription, LocalDate taskDeadline, Status taskStatus) {
+        Task task = new Task();
+
+        task.setName(taskName);
+        task.setDescription(taskDescription);
+        task.setDeadline(taskDeadline);
+        task.setStatus(taskStatus);
+
+        tr.getTasksList().add(task);
+
+        System.out.println("Задача " + task + " добавлена.");
     }
 
     @Override
     public void listTasks() {
-        if (taskList.isEmpty()) {
+        if (tr.getTasksList().isEmpty()) {
             System.out.println("В списке нет задач!");
         } else {
             System.out.println("Список задач:");
-            taskList.forEach(System.out::println);
+            tr.getTasksList().forEach(System.out::println);
         }
     }
 
     @Override
-    public void editTask() {//edit – редактировать задачу.
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Какую задачу хотите отредактировать?");
-            String str = scanner.nextLine();
-            List<Task> newList = new ArrayList<>();
-            for (Task taskSearch : taskList) {
-                if (taskSearch.getName().toLowerCase().contains(str.toLowerCase())) {
-                    newList.add(taskSearch);
-                }
-            }
-            if (newList.isEmpty()) {
-                System.out.println("Такая задача не найдена, повторить поиск?(да/нет)");
-                Scanner scanner1 = new Scanner(System.in);
-                String cmd = scanner1.nextLine();
-                if (cmd.equals("нет")) {
-                    return;
-                }
-            } else if (newList.size() == 1) {
-                System.out.println("Задача найдена:");
-                Task task = newList.get(0);
-                System.out.println(task);
-                while (true) {
-                    printMenuForEditTask();
-                    Scanner scanner2 = new Scanner(System.in);
-                    int cmd = scanner2.nextInt();
-                    if (cmd == 1) { //1.Название.
-                        newName(task);
-                        return;
-                    } else if (cmd == 2) { //2.Описание.
-                        newDescription(task);
-                        return;
-                    } else if (cmd == 3) {//3.Срок.
-                        newDeadline(task);
-                        return;
-                    } else if (cmd == 4) {//4.Статус.
-                        newStatus(task);
-                        return;
-                    } else if (cmd == 5) {//5.Отмена.
-                        break;
-                    } else {
-                        System.out.println("Неверная команда");
-                    }
-                }
-            } else {
-                System.out.println("По вашему запросу найдено больше одной задачи:");
-                taskList.forEach(System.out::println);
-                System.out.println("Повторите запрос.");
-            }
+    public void editTask(Task taskToEdit) {//edit – редактировать задачу.
+        if (taskToEdit == null) {
+            return;
         }
-    }
-
-    @Override
-    public void deleteTask() {
         while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Какую задачу хотите удалить?");
-            String str = scanner.nextLine();
-            List<Task> newList = new ArrayList<>();
-            for (Task taskSearch : taskList) {
-                if (taskSearch.getName().toLowerCase().contains(str.toLowerCase())) {
-                    newList.add(taskSearch);
-                }
-            }
-            if (newList.isEmpty()) {
-                System.out.println("Такая задача не найдена, повторить поиск?(да/нет)");
-                Scanner scanner1 = new Scanner(System.in);
-                String cmd = scanner1.nextLine();
-                if (cmd.equals("нет")) {
-                    return;
-                }
-            } else if (newList.size() == 1) {
-                System.out.println("Удаляем задачу...");
-                taskList.remove(newList.get(0));
-                System.out.println("...задача удалена!");
-            } else {
-                System.out.println("По вашему запросу найдено больше одной задачи:");
-                taskList.forEach(System.out::println);
-                System.out.println("Удалить все найденные задачи?(да/нет)");
-                Scanner scanner3 = new Scanner(System.in);
-                String cmd = scanner3.nextLine();
-                if (cmd.equals("да")) {
-                    for (Task taskToRemove : newList) {
-                        taskList.remove(taskToRemove);
-                    }
-                    System.out.println("Все задачи удалены!");
-                    return;
-                }
-            }
-        }
-    }
-
-
-    @Override
-    public void filterTasksByStatus() {
-        System.out.println("Задачи с каким статусом вывести?(1 - TODO; 2 - IN_PROGRESS; 3 - DONE; 4 - отмена.");
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
+            printMenuForEditTask(); //ok
             int cmd = scanner.nextInt();
-            if (cmd == 1) {
-                taskList.stream().filter(e -> e.getStatus().equals(TODO)).forEach(System.out::println);
+            if (cmd == 1) { //1.Название.
+                taskToEdit.setName(ui.scanTaskName());
                 break;
-            } else if (cmd == 2) {
-                taskList.stream().filter(e -> e.getStatus().equals(IN_PROGRESS)).forEach(System.out::println);
+            } else if (cmd == 2) { //2.Описание.
+                taskToEdit.setDescription(ui.scanTaskDescription());
                 break;
-            } else if (cmd == 3) {
-                taskList.stream().filter(e -> e.getStatus().equals(DONE)).forEach(System.out::println);
+            } else if (cmd == 3) {//3.Срок.
+                taskToEdit.setDeadline(ui.scanTaskDeadline());
                 break;
-            } else if (cmd == 4) {
+            } else if (cmd == 4) {//4.Статус.
+                taskToEdit.setStatus(ui.scanTaskStatus());
                 break;
+            } else if (cmd == 5) {//5.Отмена.
+                return;
             } else {
                 System.out.println("Неверная команда");
             }
         }
+        System.out.println("Задача " + taskToEdit + " изменена.");
+    }
+
+    @Override
+    public void deleteTask(Task taskToRemove) {
+        tr.getTasksList().remove(taskToRemove);
+        System.out.println("Задача удалена.");
+    }
+
+    @Override
+    public void filterTasksByStatus(Status status) {
+        System.out.println("Задачи со статусом " + status + ":");
+        tr.getTasksList().stream().filter(e -> e.getStatus().equals(status)).forEach(System.out::println);
     }
 
     @Override
@@ -175,33 +83,60 @@ public class TaskManager implements TaskManagerInterface {
         while (true) {
             System.out.println("По какому признаку надо отсортировать задачи?");
             System.out.println("1 - по названию; 2 - по сроку; 3 - статусу; 4 - отмена");
-            Scanner scanner = new Scanner(System.in);
             int cmd = scanner.nextInt();
             if (cmd == 1) {
-                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getName).
+                tr.setTasksList(tr.getTasksList().stream().sorted(Comparator.comparing(Task::getName).
                                 thenComparing(Task::getDeadline).
                                 thenComparing(Task::getStatus)).
                         toList());
-                taskList.forEach(System.out::println);
+                tr.getTasksList().forEach(System.out::println);
                 break;
             } else if (cmd == 2) {
-                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getDeadline).
+                tr.setTasksList(tr.getTasksList().stream().sorted(Comparator.comparing(Task::getDeadline).
                                 thenComparing(Task::getName).
                                 thenComparing(Task::getStatus)).
                         toList());
-                taskList.forEach(System.out::println);
+                tr.getTasksList().forEach(System.out::println);
                 break;
             } else if (cmd == 3) {
-                tm.setTaskList(taskList.stream().sorted(Comparator.comparing(Task::getStatus).
+                tr.setTasksList(tr.getTasksList().stream().sorted(Comparator.comparing(Task::getStatus).
                                 thenComparing(Task::getName).
                                 thenComparing(Task::getDeadline)).
                         toList());
-                taskList.forEach(System.out::println);
+                tr.getTasksList().forEach(System.out::println);
                 break;
             } else if (cmd == 4) {
-                break;
+                return;
             } else {
                 System.out.println("не верная команда, попробуйте снова");
+            }
+        }
+    }
+
+    public Task findTaskByName(String taskName) {
+        while (true) {
+            List<Task> newList = new ArrayList<>();
+            for (Task taskSearch : tr.getTasksList()) {
+                if (taskSearch.getName().toLowerCase().contains(taskName.toLowerCase())) {
+                    newList.add(taskSearch);
+                }
+            }
+            if (newList.isEmpty()) {
+                System.out.println("Такая задача не найдена, повторить поиск?(да/нет)");
+                String cmd = scanner.nextLine();
+                if (cmd.equals("нет")) {
+                    return null;
+                }
+            } else if (newList.size() > 1) {
+                System.out.println("По вашему запросу найдено больше одной задачи:");
+                newList.forEach(System.out::println);
+                System.out.println("Повторите запрос.");
+                return null;
+            } else {
+                System.out.println("Задача найдена:");
+                Task task = newList.get(0);
+                System.out.println(task);
+                return task;
             }
         }
     }
@@ -215,54 +150,25 @@ public class TaskManager implements TaskManagerInterface {
         System.out.println("5.Отмена.");
     }
 
-    private void newName(Task task) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите новое название:");
-        task.setName(scanner.nextLine());
-        System.out.println("Название изменено.");
-        System.out.println(task);
-    }
-
-    private void newDescription(Task task) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите новое описание:");
-        task.setDescription(scanner.nextLine());
-        System.out.println("Описание изменено.");
-        System.out.println(task);
-    }
-
-    private void newDeadline(Task task) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите новый срок (в формате ГГГГ-ММ-ДД:: ");
-        task.setDeadline(LocalDate.parse(scanner.nextLine()));
-        System.out.println("Срок изменен.");
-        System.out.println(task);
-    }
-
-    private void newStatus(Task task) {
-        while (true) {
-            System.out.println("Какой срок установить?(1 - TODO; 2 - IN_PROGRESS; 3 - DONE");
-            Scanner scanner = new Scanner(System.in);
-            int cmd = scanner.nextInt();
-            if (cmd == 1) {
-                task.setStatus(TODO);
-                break;
-            } else if (cmd == 2) {
-                task.setStatus(IN_PROGRESS);
-                break;
-            } else if (cmd == 3) {
-                task.setStatus(DONE);
-                break;
-            } else if (cmd == 4) {
-                break;
-            } else {
-                System.out.println("Неверная команда");
-            }
-        }
-        System.out.println("Статус изменен.");
-        System.out.println(task);
-    }
-    private Task createTask(){
-        return new Task();
+    public void testMethod() {
+        Task taskTest1 = new Task
+                ("Задача 1", "Описание 1", LocalDate.of(2025, 3, 29), DONE);
+        Task taskTest2 = new Task
+                ("Задача 2", "Описание 2", LocalDate.of(2025, 4, 1), TODO);
+        Task taskTest3 = new Task
+                ("Задача 3", "Описание 3", LocalDate.of(2025, 1, 29), DONE);
+        Task taskTest4 = new Task
+                ("Задача 4", "Описание 4", LocalDate.of(2025, 6, 1), IN_PROGRESS);
+        Task taskTest5 = new Task
+                ("Задача 5", "Описание 5", LocalDate.of(2025, 12, 29), TODO);
+        Task taskTest6 = new Task
+                ("Задача 6", "Описание 6", LocalDate.of(2026, 10, 1), IN_PROGRESS);
+        tr.getTasksList().add(taskTest1);
+        tr.getTasksList().add(taskTest6);
+        tr.getTasksList().add(taskTest5);
+        tr.getTasksList().add(taskTest4);
+        tr.getTasksList().add(taskTest3);
+        tr.getTasksList().add(taskTest2);
     }
 }
+
