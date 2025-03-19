@@ -1,33 +1,39 @@
 package ToDoList;
 
+import ToDoList.Controller.UserInteraction;
+import ToDoList.Enums.ConsoleCommand;
+import ToDoList.Manager.TaskManager;
+import ToDoList.Repository.TaskRepository;
+
 import java.util.Scanner;
+
+import static ToDoList.Enums.ConsoleCommand.*;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager tm = new TaskManager();
-        UserInteraction ui = new UserInteraction();
 
-        //Для тестов
-        tm.testMethod();
-        //
+        TaskRepository taskRepository = new TaskRepository();
+        TaskManager taskManager = new TaskManager(taskRepository);
+        UserInteraction userInteraction = new UserInteraction();
 
         while (true) {
             printMenu();
             Scanner scanner = new Scanner(System.in);
-            int cmd = scanner.nextInt();
-            if (cmd == 1) { //1.Добавить задачу.
-                tm.addTask(ui.scanTaskName(), ui.scanTaskDescription(), ui.scanTaskDeadline(), ui.scanTaskStatus());
-            } else if (cmd == 2) { //2. Вывести список задач.
-                tm.listTasks();
-            } else if (cmd == 3) {//3.Редактировать задачу.
-                tm.editTask(tm.findTaskByName(ui.scanTaskName()));
-            } else if (cmd == 4) {//4.Удалить задачу.
-                tm.deleteTask(tm.findTaskByName(ui.scanTaskName()));
-            } else if (cmd == 5) {//5. Отфильтровать задачи по статусу.
-                tm.filterTasksByStatus(ui.scanTaskStatus());
-            } else if (cmd == 6) {//6. Отсортировать задачи.
-                tm.sortTasks();
-            } else if (cmd == 7) {//7. Выход из системы.
+            ConsoleCommand cmd = ConsoleCommand.valueOf(scanner.nextLine());
+            if (cmd == ADD) {
+                taskRepository.addTask(userInteraction.scanTaskName(), userInteraction.scanTaskDescription(),
+                        userInteraction.scanTaskDeadline(), userInteraction.scanTaskStatus());
+            } else if (cmd == LIST) {
+                taskRepository.listTasks();
+            } else if (cmd == EDIT) {
+                taskRepository.editTask(userInteraction.scanTaskID());
+            } else if (cmd == DELETE) {
+                taskRepository.deleteTask(userInteraction.scanTaskID());
+            } else if (cmd == FILTER) {
+                taskManager.filterTasksByStatus(userInteraction.scanTaskStatus());
+            } else if (cmd == SORT) {
+                taskManager.sortTasks(userInteraction.scanForSortTasks());
+            } else if (cmd == EXIT) {
                 System.out.println("До свидания!");
                 break;
             } else {
@@ -37,13 +43,14 @@ public class Main {
     }
 
     private static void printMenu() {
-        System.out.println("Выберите команду:");
-        System.out.println("1.Добавить задачу.");
-        System.out.println("2.Вывести список задач.");
-        System.out.println("3.Редактировать задачу.");
-        System.out.println("4.Удалить задачу.");
-        System.out.println("5.Отфильтровать задачи по статусу.");
-        System.out.println("6.Отсортировать задачи.");
-        System.out.println("7.Выход из системы.");
+        System.out.println("""
+                \nВыберите команду:
+                ADD – Добавить задачу.
+                LIST – Вывести список задач.
+                EDIT – Редактировать задачу.
+                DELETE – Удалить задачу.
+                FILTER – Отфильтровать задачи по статусу.
+                SORT – Отсортировать задачи.
+                EXIT – Выход из системы.""");
     }
 }

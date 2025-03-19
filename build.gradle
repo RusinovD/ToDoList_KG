@@ -15,8 +15,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
 }
 
 test {

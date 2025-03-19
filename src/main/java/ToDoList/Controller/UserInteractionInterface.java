@@ -1,4 +1,4 @@
-package ToDoList;
+package ToDoList.Controller;
 
 import java.time.LocalDate;
 
@@ -10,4 +10,6 @@ public interface UserInteractionInterface {
     LocalDate scanTaskDeadline();
 
     Enum scanTaskStatus();
+
+    int scanTaskID();
 }
