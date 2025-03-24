@@ -1,6 +1,8 @@
-import ToDoList.Controller.UserInteraction;
-import ToDoList.Enums.Status;
-import ToDoList.Enums.TaskFields;
+package userInteractionTest;
+
+import ToDoList.controller.UserInteraction;
+import ToDoList.enums.Status;
+import ToDoList.enums.TaskFields;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

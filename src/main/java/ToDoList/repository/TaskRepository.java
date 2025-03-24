@@ -1,8 +1,7 @@
-package ToDoList.Repository;
+package ToDoList.repository;
 
-import ToDoList.Controller.UserInteraction;
-import ToDoList.Enums.Status;
-import ToDoList.Enums.TaskFields;
+import ToDoList.enums.Status;
+import ToDoList.model.Task;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,16 +10,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ToDoList.Enums.TaskFields.*;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskRepository {
     private Map<Integer, Task> taskMap = new HashMap<>();
     private int taskId = 1;
-
-    UserInteraction userInteraction = new UserInteraction();
 
     private Task createTask() {
         return new Task();
@@ -46,27 +41,33 @@ public class TaskRepository {
         }
     }
 
-    public void editTask(int id) {
+    public Task isTaskContains(int id) {
         if (!taskMap.containsKey(id)) {
-            System.out.println("Задача не найдена, повторите запрос.");
-            return;
+            System.out.println("Такой задачи в списке нет.");
+            return null;
+        } else {
+            return taskMap.get(id);
         }
-        TaskFields cmd = userInteraction.scanForEditTask();
-        if (cmd == EXIT) {
-            System.out.println("Отмена.");
-            return;
-        }
-        Task task = taskMap.get(id);
-        if (cmd == NAME) {
-            task.setName(userInteraction.scanTaskName());
-        } else if (cmd == DESCRIPTION) {
-            task.setDescription(userInteraction.scanTaskDescription());
-        } else if (cmd == DEADLINE) {
-            task.setDeadline(userInteraction.scanTaskDeadline());
-        } else if (cmd == STATUS) {
-            task.setStatus(userInteraction.scanTaskStatus());
-        }
-        System.out.println("В задаче \"" + task.getName() + "\" изменен параметр " + cmd + ".");
+    }
+
+    public void editTaskName(Task task, String name) {
+        task.setName(name);
+        System.out.println("В задаче \"" + task.getName() + "\" изменено \"Название\".");
+    }
+
+    public void editTask(Task task, String description) {
+        task.setDescription(description);
+        System.out.println("В задаче \"" + task.getName() + "\" изменено \"Описание\".");
+    }
+
+    public void editTask(Task task, LocalDate deadline) {
+        task.setDeadline(deadline);
+        System.out.println("В задаче \"" + task.getName() + "\" изменен \"Срок\".");
+    }
+
+    public void editTask(Task task, Status status) {
+        task.setStatus(status);
+        System.out.println("В задаче \"" + task.getName() + "\" изменен \"Статус\".");
     }
 
     public void deleteTask(int id) {

@@ -1,8 +1,10 @@
-import ToDoList.Enums.Status;
-import ToDoList.Enums.TaskFields;
-import ToDoList.Manager.TaskManager;
-import ToDoList.Repository.Task;
-import ToDoList.Repository.TaskRepository;
+package managerTest;
+
+import ToDoList.enums.Status;
+import ToDoList.enums.TaskFields;
+import ToDoList.manager.TaskManager;
+import ToDoList.model.Task;
+import ToDoList.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +21,8 @@ class TaskManagerTest {
     TaskRepository taskRepository = new TaskRepository();
     TaskManager taskManager = new TaskManager(taskRepository);
     String newLine = System.lineSeparator();
+    PrintStream originalOut;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     @BeforeEach
     void setMap() {
@@ -30,13 +34,13 @@ class TaskManagerTest {
         tempMap.put(2, task2);
         tempMap.put(3, task3);
         taskRepository.setTaskMap(tempMap);
+
+        originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
     }
 
     @Test
     void filterTasksByStatusDONETest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.filterTasksByStatus(Status.DONE);
         System.setOut(originalOut);
         assertEquals("Задачи со статусом DONE:" + newLine + "ID 1 - Task(name=1, description=1, " +
@@ -45,9 +49,6 @@ class TaskManagerTest {
 
     @Test
     void filterTasksByStatusTODOTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.filterTasksByStatus(Status.TODO);
         System.setOut(originalOut);
         assertEquals("Задачи со статусом TODO:" + newLine + "ID 3 - Task(name=3, description=3, " +
@@ -56,22 +57,17 @@ class TaskManagerTest {
 
     @Test
     void filterTasksByStatusInProgressTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.filterTasksByStatus(Status.IN_PROGRESS);
         System.setOut(originalOut);
         assertEquals("Задачи со статусом IN_PROGRESS:" + newLine + "ID 2 - Task(name=2, description=2, " +
                 "deadline=2025-04-04, status=IN_PROGRESS)" + newLine, outputStream.toString());
     }
+
     @Test
     void sortTasksByNameTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.sortTasks(TaskFields.NAME);
         System.setOut(originalOut);
-        assertEquals( "1 - Task(name=1, description=1, deadline=2025-03-03, status=DONE)" + newLine +
+        assertEquals("1 - Task(name=1, description=1, deadline=2025-03-03, status=DONE)" + newLine +
                         "2 - Task(name=2, description=2, deadline=2025-04-04, status=IN_PROGRESS)" + newLine +
                         "3 - Task(name=3, description=3, deadline=2025-05-05, status=TODO)" + newLine,
                 outputStream.toString());
@@ -79,12 +75,9 @@ class TaskManagerTest {
 
     @Test
     void sortTasksByDeadlineTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.sortTasks(TaskFields.DEADLINE);
         System.setOut(originalOut);
-        assertEquals( "1 - Task(name=1, description=1, deadline=2025-03-03, status=DONE)" + newLine +
+        assertEquals("1 - Task(name=1, description=1, deadline=2025-03-03, status=DONE)" + newLine +
                         "2 - Task(name=2, description=2, deadline=2025-04-04, status=IN_PROGRESS)" + newLine +
                         "3 - Task(name=3, description=3, deadline=2025-05-05, status=TODO)" + newLine,
                 outputStream.toString());
@@ -92,9 +85,6 @@ class TaskManagerTest {
 
     @Test
     void sortTasksByStatusTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskManager.sortTasks(TaskFields.STATUS);
         System.setOut(originalOut);
         assertEquals("2 - Task(name=2, description=2, deadline=2025-04-04, status=IN_PROGRESS)" + newLine +

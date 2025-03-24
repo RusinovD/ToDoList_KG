@@ -1,7 +1,7 @@
-package ToDoList.Manager;
+package ToDoList.manager;
 
-import ToDoList.Enums.Status;
-import ToDoList.Enums.TaskFields;
+import ToDoList.enums.Status;
+import ToDoList.enums.TaskFields;
 
 public interface TaskManagerInterface {
 

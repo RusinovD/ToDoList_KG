@@ -1,6 +1,6 @@
-package ToDoList.Repository;
+package ToDoList.model;
 
-import ToDoList.Enums.Status;
+import ToDoList.enums.Status;
 import lombok.*;
 
 import java.time.LocalDate;

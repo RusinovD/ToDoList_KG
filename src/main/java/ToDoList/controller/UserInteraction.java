@@ -1,9 +1,10 @@
-package ToDoList.Controller;
+package ToDoList.controller;
 
-import ToDoList.Enums.Status;
-import ToDoList.Enums.TaskFields;
+import ToDoList.enums.Status;
+import ToDoList.enums.TaskFields;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class UserInteraction implements UserInteractionInterface {
@@ -29,14 +30,25 @@ public class UserInteraction implements UserInteractionInterface {
     @Override
     public LocalDate scanTaskDeadline() {
         System.out.println("Установите срок задачи (в формате ГГГГ-ММ-ДД:");
-        String taskDeadline = scanner.nextLine();
-        return LocalDate.parse(taskDeadline);
+        while (true) {
+            try {
+                return LocalDate.parse(scanner.nextLine());
+            } catch (DateTimeParseException e) {
+                System.out.println("Неверный формат даты, введите дату снова:");
+            }
+        }
     }
 
     @Override
     public Status scanTaskStatus() {
         System.out.println("Введите статус задачи (TODO, IN_PROGRESS, DONE):");
-        return Status.valueOf(scanner.nextLine());
+        while (true) {
+            try {
+                return Status.valueOf(scanner.nextLine());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неверно введен статус, введите еще раз:");
+            }
+        }
     }
 
     @Override
@@ -47,12 +59,18 @@ public class UserInteraction implements UserInteractionInterface {
 
     public TaskFields scanForEditTask() {
         printMenuForEditTask();
-        return TaskFields.valueOf(scanner.nextLine());
+        while (true) {
+            try {
+                return TaskFields.valueOf(scanner.nextLine());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неверный ввод, что в задаче хотите отредактировать?");
+            }
+        }
     }
 
-    private static void printMenuForEditTask() {
+    private void printMenuForEditTask() {
         System.out.println("""
-                Что в задаче хотите отредактировать?:
+                Что в задаче хотите отредактировать?
                 NAME - Название.
                 DESCRIPTION - Описание.
                 DEADLINE - Срок.
@@ -62,7 +80,13 @@ public class UserInteraction implements UserInteractionInterface {
 
     public TaskFields scanForSortTasks() {
         printMenuForSortTasks();
-        return TaskFields.valueOf(scanner.nextLine());
+        while (true) {
+            try {
+                return TaskFields.valueOf(scanner.nextLine());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неверный ввод, по какому признаку надо отсортировать задачи?");
+            }
+        }
     }
 
     private static void printMenuForSortTasks() {

@@ -1,6 +1,8 @@
-import ToDoList.Enums.Status;
-import ToDoList.Repository.Task;
-import ToDoList.Repository.TaskRepository;
+package repositoryTest;
+
+import ToDoList.enums.Status;
+import ToDoList.model.Task;
+import ToDoList.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,9 @@ class TaskRepositoryTest {
     HashMap <Integer, Task> tempMap;
     String newLine = System.lineSeparator();
 
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream originalOut;
+
     @BeforeEach
     void setUp() {
         tempMap = new HashMap<>();
@@ -26,6 +31,9 @@ class TaskRepositoryTest {
         tempMap.put(2, task2);
         tempMap.put(3, task3);
         taskRepository.setTaskMap(tempMap);
+
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
     }
 
     @Test
@@ -39,9 +47,6 @@ class TaskRepositoryTest {
 
     @Test
     void listTasksTest() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskRepository.listTasks();
         System.setOut(originalOut);
         assertEquals( "Список задач:" + newLine +
@@ -54,9 +59,6 @@ class TaskRepositoryTest {
     @Test
     void deleteNonExistTaskTest() {
         int CONSTANT_NON_EXIST_ID = 10;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskRepository.deleteTask(CONSTANT_NON_EXIST_ID);
         System.setOut(originalOut);
         assertEquals("Задача не найдена, повторите запрос." + newLine, outputStream.toString());
@@ -65,12 +67,8 @@ class TaskRepositoryTest {
     @Test
     void deleteTaskTest() {
         int CONSTANT_ID = 1;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
         taskRepository.deleteTask(CONSTANT_ID);
         System.setOut(originalOut);
         assertEquals("Задача \"1\" удалена." + newLine, outputStream.toString());
     }
-
 }

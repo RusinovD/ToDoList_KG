@@ -1,4 +1,4 @@
-package ToDoList.Enums;
+package ToDoList.enums;
 
 public enum ConsoleCommand {
     ADD,

@@ -19,6 +19,22 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
 }
 
-test {
+/*test {
     useJUnitPlatform()
-}
+}*/
+
+test {
+
+
+    // discover and execute JUnit4-based tests
+    useJUnit()
+
+    // discover and execute TestNG-based tests
+    useTestNG()
+
+    // discover and execute JUnit Platform-based tests
+    useJUnitPlatform()
+
+
+    }
+

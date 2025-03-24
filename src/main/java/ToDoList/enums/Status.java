@@ -1,4 +1,4 @@
-package ToDoList.Enums;
+package ToDoList.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

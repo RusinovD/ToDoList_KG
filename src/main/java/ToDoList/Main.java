@@ -1,13 +1,17 @@
 package ToDoList;
 
-import ToDoList.Controller.UserInteraction;
-import ToDoList.Enums.ConsoleCommand;
-import ToDoList.Manager.TaskManager;
-import ToDoList.Repository.TaskRepository;
+import ToDoList.controller.UserInteraction;
+import ToDoList.enums.ConsoleCommand;
+import ToDoList.enums.TaskFields;
+import ToDoList.manager.TaskManager;
+import ToDoList.model.Task;
+import ToDoList.repository.TaskRepository;
 
 import java.util.Scanner;
 
-import static ToDoList.Enums.ConsoleCommand.*;
+import static ToDoList.enums.ConsoleCommand.*;
+import static ToDoList.enums.TaskFields.*;
+import static ToDoList.enums.TaskFields.EXIT;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,21 +23,46 @@ public class Main {
         while (true) {
             printMenu();
             Scanner scanner = new Scanner(System.in);
-            ConsoleCommand cmd = ConsoleCommand.valueOf(scanner.nextLine());
+            ConsoleCommand cmd = null;
+            try {
+                cmd = ConsoleCommand.valueOf(scanner.nextLine());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неверный ввод команды, введите снова:");
+            }
             if (cmd == ADD) {
                 taskRepository.addTask(userInteraction.scanTaskName(), userInteraction.scanTaskDescription(),
                         userInteraction.scanTaskDeadline(), userInteraction.scanTaskStatus());
             } else if (cmd == LIST) {
                 taskRepository.listTasks();
             } else if (cmd == EDIT) {
-                taskRepository.editTask(userInteraction.scanTaskID());
+                while (true) {
+                    int id = userInteraction.scanTaskID();
+                    Task task = taskRepository.isTaskContains(id);
+                    if (task == null) {
+                        break;
+                    }
+                    TaskFields taskFields = userInteraction.scanForEditTask();
+                    if (taskFields == EXIT) {
+                        System.out.println("Отмена.");
+                        break;
+                    }
+                    if (taskFields == NAME) {
+                        taskRepository.editTaskName(task, userInteraction.scanTaskName());
+                    } else if (taskFields == DESCRIPTION) {
+                        taskRepository.editTask(task, userInteraction.scanTaskDescription());
+                    } else if (taskFields == DEADLINE) {
+                        taskRepository.editTask(task, userInteraction.scanTaskDeadline());
+                    } else if (taskFields == STATUS) {
+                        taskRepository.editTask(task, userInteraction.scanTaskStatus());
+                    }
+                }
             } else if (cmd == DELETE) {
                 taskRepository.deleteTask(userInteraction.scanTaskID());
             } else if (cmd == FILTER) {
                 taskManager.filterTasksByStatus(userInteraction.scanTaskStatus());
             } else if (cmd == SORT) {
                 taskManager.sortTasks(userInteraction.scanForSortTasks());
-            } else if (cmd == EXIT) {
+            } else if (cmd == ConsoleCommand.EXIT) {
                 System.out.println("До свидания!");
                 break;
             } else {

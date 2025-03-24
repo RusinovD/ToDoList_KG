@@ -1,4 +1,4 @@
-package ToDoList.Controller;
+package ToDoList.controller;
 
 import java.time.LocalDate;
 
